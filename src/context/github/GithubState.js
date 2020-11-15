@@ -2,6 +2,7 @@ import React, { useReducer } from 'react';
 import axios from 'axios';
 import GithubContext from './githubContext';
 import GithubReducer from './githubReducer';
+
 import {
   SEARCH_USERS,
   SET_LOADING,
@@ -50,7 +51,19 @@ const GithubState = (props) => {
       payload: res.data,
     });
   };
+
   // Get Repos
+  const getUserRepos = async (username) => {
+    setLoading();
+
+    const res = await axios.get(
+      `http://api.github.com/users/${username}/repos?per_page=5&sort=created:asc&client_id=
+    ${process.env.REACT_APP_GITHUB_CLIENT_ID}
+    &client_secret=${process.env.REACT_APP_GITHUB_CLIENT_SECRET}`
+    );
+
+    dispatch({ type: GET_REPOS, payload: res.data });
+  };
 
   // Clear Users
   const clearUsers = () => dispatch({ type: CLEAR_USERS });
@@ -67,6 +80,7 @@ const GithubState = (props) => {
         searchUsers,
         clearUsers,
         getUser,
+        getUserRepos,
       }}
     >
       {props.children}
