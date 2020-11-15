@@ -6,7 +6,7 @@ import {
   SEARCH_USERS,
   SET_LOADING,
   CLEAR_USERS,
-  GET_USERS,
+  GET_USER,
   GET_REPOS,
 } from '../types';
 
@@ -36,10 +36,24 @@ const GithubState = (props) => {
     });
   };
   // Get User
+  const getUser = async (username) => {
+    setLoading();
 
+    const res = await axios.get(
+      `http://api.github.com/users/${username}?client_id=
+    ${process.env.REACT_APP_GITHUB_CLIENT_ID}
+    &client_secret=${process.env.REACT_APP_GITHUB_CLIENT_SECRET}`
+    );
+
+    dispatch({
+      type: GET_USER,
+      payload: res.data,
+    });
+  };
   // Get Repos
 
   // Clear Users
+  const clearUsers = () => dispatch({ type: CLEAR_USERS });
 
   // Set Loading
   const setLoading = () => dispatch({ type: SET_LOADING });
@@ -51,6 +65,8 @@ const GithubState = (props) => {
         repos: state.repos,
         loading: state.loading,
         searchUsers,
+        clearUsers,
+        getUser,
       }}
     >
       {props.children}
